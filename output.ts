@@ -1,0 +1,3 @@
+interface root {
+  name: string
+}

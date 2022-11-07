@@ -1,0 +1,9 @@
+{
+    "person": {
+        "name": "isaac"
+    },
+    "phone": {
+        "type": "iphone",
+        "model": 14
+    }
+}

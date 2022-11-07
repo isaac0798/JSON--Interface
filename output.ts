@@ -1,3 +1,9 @@
 interface root {
-  name: string
+    person: {
+      name: string
+    }
+    phone: {
+      type: string
+      model: number
+    }
 }

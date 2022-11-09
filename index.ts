@@ -1,7 +1,9 @@
+import { exec } from 'child_process';
 import * as fs from 'fs';
 import basicJson from './JSONs/basic.json'
 import onelevel from './JSONs/onelevel.json'
 import multipleOneLevel from './JSONs/multiple-onelevel.json'
+import nested_onelevel from './JSONs/nested_onelevel.json'
 
 interface test {
     data: string
@@ -10,7 +12,7 @@ interface test {
 let outputObject = {};
 
 
-const outputData = (data: {}): string => {
+const outputData = (data: {}, depth: number): string => {
     let outputString = ''
     let index = 0
     const objLength = Object.keys(data).length
@@ -20,10 +22,10 @@ const outputData = (data: {}): string => {
         const valType = typeof value;
         if (valType == "object") {
             if (index === objLength) {
-                outputString += `${key}: {\n${outputData(value as {})}\n}`
+                outputString += `${key}: {\n${outputData(value as {}, depth + 1)}\n}`
                 continue;
             }
-            outputString += `${key}: {\n${outputData(value as {})}\n}\n`
+            outputString += `${key}: {\n${outputData(value as {}, depth + 1)}\n}\n`
             continue;
         } 
         
@@ -63,10 +65,10 @@ const removeString = (str: string): string => {
 }
 
 const dataString = (str: string): string => {
-    return removeString(indentString(str, 2))
+    return removeString(str)
 }
 
-const out = dataString(outputData(multipleOneLevel))
+const out = dataString(outputData(nested_onelevel, 1))
 
 const baseInterfaceString = 'interface root {' + '\n' + removeString(indentString(out,2)) + '\n' + '}';
 const buffer = Buffer.from(baseInterfaceString, 'utf-8');
@@ -77,5 +79,6 @@ fs.writeFile('./output.ts',baseInterfaceString, (err) => {
         return console.log(err)
     }
 
-    console.log('dub')
+    exec('npx rome format output.ts --write')
 });
+

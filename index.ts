@@ -13,9 +13,7 @@ interface interfaceObject {
     [key: string]: string
 }
 
-let outputObject: interfaceObject = {
-	root: ''
-};
+let outputObject: interfaceObject = {};
 
 let interfaces: string[] = [];
 
@@ -31,13 +29,13 @@ const outputData = (data: {}, depth: number): string => {
 			//if final key no break line at end of obj
 			interfaces.push(key.charAt(0).toUpperCase() + key.slice(1))
 			if (index === objLength) {
-                let line = `${key}: {\n${outputData(value as {}, depth + 1)}\n}`;
+                let line = `{\n${outputData(value as {}, depth + 1)}\n}\n`;
                 outputObject[key.charAt(0).toUpperCase() + key.slice(1)] = line
 				outputString += `${interfaces.pop()}`
 				continue;
 			}
 			//if break line at end of object
-            let line = `${key}: {\n${outputData(value as {}, depth + 1)}\n}\n`;
+            let line = `{\n${outputData(value as {}, depth + 1)}\n}\n`;
             outputObject[key.charAt(0).toUpperCase() + key.slice(1)] = line
 			outputString += `${interfaces.pop()}\n`
 			continue;
@@ -85,7 +83,7 @@ const dataString = (str: string): string => {
 const out = dataString(outputData(multipleOneLevel, 1));
 
 const baseInterfaceString =
-	"interface root {" + "\n" + removeString(indentString(out, 2)) + "\n" + "}";
+	"interface root {" + "\n" + removeString(indentString(out, 2)) + "\n" + "}" + "\n";
 const buffer = Buffer.from(baseInterfaceString, "utf-8");
 console.dir(outputObject, {depth: null});
 //const buffertest = Buffer.from(JSON.stringify(test));
@@ -95,5 +93,10 @@ fs.writeFile("./output.d.ts", baseInterfaceString, (err) => {
 		return console.log(err);
 	}
 
+    for (const [key, value] of Object.entries(outputObject)) {
+        fs.appendFileSync('./output.d.ts', `interface ${key} ${value}\n`);
+    }
+
 	exec("npx rome format output.d.ts --write");
+    console.log('dub');
 });

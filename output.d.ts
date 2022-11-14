@@ -1,0 +1,4 @@
+interface root {
+	Person;
+	Phone;
+}

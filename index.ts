@@ -13,6 +13,8 @@ interface interfaceObject {
     [key: string]: string
 }
 
+//TODO: Arrays
+
 let outputObject: interfaceObject = {};
 
 let interfaces: string[] = [];
